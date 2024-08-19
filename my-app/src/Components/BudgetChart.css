@@ -1,0 +1,26 @@
+.filter-options {
+    margin-bottom: 20px;
+  }
+  
+  .filter-options button {
+    margin-right: 10px;
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .filter-options button:hover {
+    background-color: #0056b3;
+  }
+  
+  .filter-btn
+  {
+    background-color: orange;
+    border: none;
+  }
+  .filter-menu
+  {
+    margin-bottom: 100px;
+  }
