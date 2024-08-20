@@ -24,6 +24,7 @@ export default function ShowBudget({
   const totalPages = Math.ceil(filteredEntries.length / rowsPerPage);
 
   useEffect(() => {
+    console.log('entries changes')
     axios.get(`http://localhost:8080/budgetEntries/${users._id}`, {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
@@ -35,7 +36,7 @@ export default function ShowBudget({
       .catch((error) => {
         console.error("Error fetching data", error);
       });
-  }, [users._id]);
+  }, [users._id, entries]);
 
 
   useEffect(() => {
@@ -63,9 +64,7 @@ export default function ShowBudget({
   };
 
   const handleEdit = (id) => {
-    // setEditId(id);
-    // setUpdatedEntry(entries.find((en) => en._id === id) || {});
-
+   
     setEditId(id);
   const entryToEdit = entries.find((en) => en._id === id);
   setUpdatedEntry({
@@ -104,11 +103,12 @@ export default function ShowBudget({
     setEditId(null);
   };
 
-  const filterByDate = (newDate) => {
+  async function filterByDate (newDate) {
     const filtered = entries.filter((en) => {
       return new Date(en.date).toDateString() === newDate.toDateString();
     });
     setFilteredEntries(filtered);
+    
   };
 
   const currentRows = filteredEntries.slice(

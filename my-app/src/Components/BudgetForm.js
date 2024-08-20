@@ -34,6 +34,7 @@ export default function AddBudget({addBudget, limit, entries, modal, setModal}) 
           setprice('');
           setDate(new Date().toISOString().slice(0, 10));
           }
+          setModal(!modal)
         }
     
   return (

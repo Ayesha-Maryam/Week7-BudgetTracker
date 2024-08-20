@@ -88,9 +88,10 @@ function App() {
       if (!response) {
         throw new Error("Cannot fetch Data");
       }
-      const _response = await axios.post(
+      const _response = await axios.get(
         `http://localhost:8080/budgetEntries/${users._id}`
       );
+      
       setEntries(_response.data || []);
     } catch (error) {
       console.log(error);

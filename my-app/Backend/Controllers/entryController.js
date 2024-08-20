@@ -74,10 +74,11 @@ async function deleteEntry(req,res)
         console.log(error)
     }
 }
+
 module.exports={
     createEntry,
     getEntryByUserId,
     updateEntry,
-    deleteEntry
+    deleteEntry,
 
 }
