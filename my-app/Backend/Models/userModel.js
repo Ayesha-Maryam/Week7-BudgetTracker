@@ -5,11 +5,6 @@ const budgetUserSchema= new mongoose.Schema({
     email:String,
     password:String,
     budgetLimit:Number,
-    entries:[{
-        name:String,
-        price:Number,
-        date:Date,
-    }]
 })
 const BudgetUsers = mongoose.model('BudgetUsers', budgetUserSchema)
 console.log("Schema made Successfully.")

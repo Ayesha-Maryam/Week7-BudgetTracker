@@ -24,35 +24,31 @@ export default function ShowBudget({
   const totalPages = Math.ceil(filteredEntries.length / rowsPerPage);
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/budgetUser/${users._id}`, {
+    axios.get(`http://localhost:8080/budgetEntries/${users._id}`, {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json",
       })
       .then((response) => {
         console.log({ reponse: response.data });
-        setFilteredEntries(response.data.entries);
+        setFilteredEntries(response.data);
       })
       .catch((error) => {
         console.error("Error fetching data", error);
       });
   }, [users._id]);
 
+
   useEffect(() => {
-    console.log("Entries changed.", { entries });
-    filterByDate(filterDate);
+    console.log("Date Changed.", { entries });
+     filterByDate(filterDate);
     
-  }, [entries]);
+  }, [filterDate]);
 
   const handleDelete = async (id) => {
     const newEntries = entries.filter((entry) => entry._id !== id);
     try {
-      const response = await axios.put(
-        `http://localhost:8080/budgetUser/${users._id}`,
-        {
-          ...users,
-          entries: newEntries,
-        }
-      );
+      const response = await axios.delete(
+        `http://localhost:8080/budgetEntries/${id}`);
       if (!response) {
         throw new Error("Cannot fetch Data");
       }
@@ -67,22 +63,31 @@ export default function ShowBudget({
   };
 
   const handleEdit = (id) => {
+    // setEditId(id);
+    // setUpdatedEntry(entries.find((en) => en._id === id) || {});
+
     setEditId(id);
-    setUpdatedEntry(entries.find((en) => en._id === id) || {});
+  const entryToEdit = entries.find((en) => en._id === id);
+  setUpdatedEntry({
+    ...entryToEdit,
+    date: entryToEdit?.date ? new Date(entryToEdit.date) : new Date(), 
+  });
   };
 
   const handleSave = async () => {
     const updatedEntries = entries.map((entry) =>
-      entry._id === editId ? updatedEntry : entry
+      entry._id === editId
+        ? { ...updatedEntry, date: new Date(updatedEntry.date) } 
+        : entry
     );
-    
 
     try {
       const response = await axios.put(
-        `http://localhost:8080/budgetUser/${users._id}`,
+        `http://localhost:8080/budgetEntries/${editId}`,
         {
-          ...users,
-          entries: updatedEntries,
+          name:updatedEntries.name,
+          price: updatedEntries.price,
+          date: updatedEntries.date,
         }
       );
       if (!response) {
@@ -204,7 +209,7 @@ export default function ShowBudget({
                 <td>
                   {editId === en._id ? (
                     <input
-                      value={format(updatedEntry.date, "yyyy-MM-dd")|| ""}
+                    value={updatedEntry.date ? format(new Date(updatedEntry.date), "yyyy-MM-dd") : ""}
                       type="date"
                       onChange={(e) =>
                         setUpdatedEntry({
@@ -214,7 +219,7 @@ export default function ShowBudget({
                       }
                     />
                   ) : (
-                    format(new Date(en.date || Date.now()), "yyyy-MM-dd")
+                    en.date ? format(new Date(en.date), "yyyy-MM-dd") : "Invalid Date"
                   )}
                 </td>
                 <td>

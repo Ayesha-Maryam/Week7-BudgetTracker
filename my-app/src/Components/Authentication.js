@@ -12,55 +12,43 @@ export default function SignUp({ login }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [budgetLimit, setBudgetLimit] = useState("");
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       toast.error("Incorrect Password");
-    } 
-    else {
-      try
-      {
-        const response=await axios.get(`http://localhost:8080/budgetUser`, {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
-        })
-        if(!response)
-        {
-          throw new Error("Error in geting data")
+    } else {
+      try {
+        const response = await axios.get(`http://localhost:8080/budgetUser`, {
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
+        });
+        if (!response) {
+          throw new Error("Error in geting data");
         }
         const existingUser = await response.data.find((u) => u.email === email);
-      if (existingUser) {
-        toast.error("User already exist. Please Sign in!");
-        return;
-        
+        if (existingUser) {
+          toast.error("User already exist. Please Sign in!");
+          return;
+        }
+      } catch (error) {
+        alert(error);
       }
-
-      }
-      catch(error)
-      {
-        alert(error)
-      }
-      try{
-        const response= await axios.post(`http://localhost:8080/budgetUser`,{
+      try {
+        const response = await axios.post(`http://localhost:8080/budgetUser`, {
           firstName,
           lastName,
           email,
           password,
           confirmPassword,
           budgetLimit,
-          entries: [],
-        })
-        if(!response)
-        {
-          throw new Error("Cannot Post Data")
+        });
+        if (!response) {
+          throw new Error("Cannot Post Data");
         }
-        login(response.data)
+        login(response.data);
+      } catch (error) {
+        console.log(error);
       }
-      catch(error)
-      {
-        console.log(error)
-      }
-      
     }
   };
   return (
@@ -139,30 +127,26 @@ export default function SignUp({ login }) {
 export function SignIn({ login }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    try
-      {
-        const response=await axios.get(`http://localhost:8080/budgetUser`)
-        if(!response)
-        {
-          throw new Error("Error in geting data")
-        }
-        const user =await(response.data).find(
-      (u) => u.email === email && u.password === password
-    );
-    if (user) {
-      login(user);
-      toast.success("Login Successful");
-    } else {
-      toast.error("Invalid Email or Password");
+    try {
+      const response = await axios.get(`http://localhost:8080/budgetUser`);
+      if (!response) {
+        throw new Error("User not Fetched");
+      }
+      const user = await response.data.find(
+        (u) => u.email === email && u.password === password
+      );
+      if (user) {
+        login(user);
+        toast.success("Login Successful");
+      } else {
+        toast.error("Invalid Email or Password");
+      }
+    } catch (error) {
+      console.log(error);
     }
-  }
-  catch(error)
-  {
-    console.log(error)
   };
-}
   return (
     <div className="container">
       <div className="signup">

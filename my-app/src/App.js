@@ -21,11 +21,19 @@ function App() {
               "Access-Control-Allow-Origin": "*",
               "Content-Type": "application/json",
             }
+            
           );
+          const _response = await axios.get(
+            `http://localhost:8080/budgetEntries/${currentUser._id}`,
+            {
+              "Access-Control-Allow-Origin": "*",
+              "Content-Type": "application/json",
+            }
+          )
           if (!response) {
-            throw new Error("Cannot fetch Current Data");
+            throw new Error("Cannot fetch Current User Data");
           }
-          setEntries(response.data.entries || []);
+          setEntries(_response.data || []);
           setUsers(currentUser);
         } catch (error) {
           console.log(error);
@@ -46,7 +54,11 @@ function App() {
       if (!response) {
         throw new Error("Cannot fetch Data");
       }
-      setEntries(response.entries || []);
+      const _response= await axios.get(`http://localhost:8080/budgetEntries/${userData._id}`)
+      if (!_response) {
+        throw new Error("Cannot fetch Data");
+      }
+      setEntries(_response.data || []);
     } catch (error) {
       console.log(error);
     }
@@ -64,17 +76,22 @@ function App() {
 
   const addBudget = async (entry) => {
     try {
-      const response = await axios.put(
-        `http://localhost:8080/budgetUser/${users._id}`,
+      const response = await axios.post(
+        `http://localhost:8080/budgetEntries`,
         {
-          ...users,
-          entries: [...entries, entry],
+          name: entry.name,
+          price:entry.price,
+          date: entry.date,
+          userId: users._id
         }
       );
       if (!response) {
         throw new Error("Cannot fetch Data");
       }
-      setEntries(response.data.entries || []);
+      const _response = await axios.post(
+        `http://localhost:8080/budgetEntries/${users._id}`
+      );
+      setEntries(_response.data || []);
     } catch (error) {
       console.log(error);
     }

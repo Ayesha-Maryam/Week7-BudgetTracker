@@ -15,6 +15,10 @@ export default function AddBudget({addBudget, limit, entries, modal, setModal}) 
         e.preventDefault();
         const totalSpend=entries.reduce((a,b)=>a+parseFloat(b.price),0)
         const newPrice = parseFloat(price) || 0;
+        if (!date || isNaN(Date.parse(date))) {
+          toast.warn("Please select a valid date.");
+          return;
+        }
          if (name && price && date){
           const newEntry={name, price, date}
           if(totalSpend + newPrice>limit)

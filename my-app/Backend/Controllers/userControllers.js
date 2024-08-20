@@ -1,5 +1,6 @@
 const express= require('express')
 const BudgetUsers = require('../Models/userModel');
+const BudgetEntries=require('../Models/entriesModel')
 
 async function createUser(req, res)
 {
@@ -11,7 +12,6 @@ async function createUser(req, res)
             email: req.body.email,
             password: req.body.password,
             budgetLimit: req.body.budgetLimit,
-            entries: req.body.entries
         })
         newUser= await newUser.save();
         res.send(newUser);
@@ -41,12 +41,13 @@ async function getUserbyId(req, res)
 {
     try
     {
-        let user= await BudgetUsers.findById(req.params.id)
+        const user= await BudgetUsers.findById(req.params.id)
         if(!user)
         {
             return res.status(404).send("User not Found!")
         }
-        res.send(user)
+        const entries= await BudgetEntries.find({user:user._id})
+        res.send({user, entries})
     
     }
     catch(error){
@@ -58,7 +59,7 @@ try
 {
     const user=await BudgetUsers.findByIdAndUpdate(req.params.id,
         {
-            entries:req.body.entries
+            budgetLimit:req.body.budgetLimit
         }
     )
     if(!user)
@@ -81,10 +82,9 @@ async function deleteUser(req, res)
         if(!user)
             {
                 return res.status(404).send('User not Found')
-            }else
-            {
-                return res.status(204).send()
             }
+            await BudgetEntries.deleteMany({user:req.params.id})
+            return res.status(204).send()
     }
     catch(error){
         console.log(error)
